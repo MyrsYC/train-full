@@ -1,0 +1,15 @@
+server:
+  port: 8004
+
+spring:
+  application:
+    name: train-payment
+  
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+
+logging:
+  level:
+    com.train.payment: debug

@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # MySQL数据库
+  mysql:
+    image: mysql:8.0
+    container_name: train-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+      - mysql-data:/var/lib/mysql
+    networks:
+      - train-network
+
+  # Redis缓存
+  redis:
+    image: redis:7-alpine
+    container_name: train-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - train-network
+
+  # Nacos服务注册中心
+  nacos:
+    image: nacos/nacos-server:v2.2.3
+    container_name: train-nacos
+    environment:
+      MODE: standalone
+      PREFER_HOST_MODE: hostname
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    volumes:
+      - nacos-data:/home/nacos/data
+    networks:
+      - train-network
+
+volumes:
+  mysql-data:
+  redis-data:
+  nacos-data:
+
+networks:
+  train-network:
+    driver: bridge

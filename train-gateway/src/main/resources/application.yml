@@ -1,0 +1,55 @@
+server:
+  port: 8000
+
+spring:
+  application:
+    name: train-gateway
+  
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      
+      routes:
+        # 用户服务路由
+        - id: train-user
+          uri: lb://train-user
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - StripPrefix=1
+        
+        # 车票服务路由
+        - id: train-ticket
+          uri: lb://train-ticket
+          predicates:
+            - Path=/api/ticket/**
+          filters:
+            - StripPrefix=1
+        
+        # 订单服务路由
+        - id: train-order
+          uri: lb://train-order
+          predicates:
+            - Path=/api/order/**
+          filters:
+            - StripPrefix=1
+        
+        # 支付服务路由
+        - id: train-payment
+          uri: lb://train-payment
+          predicates:
+            - Path=/api/payment/**
+          filters:
+            - StripPrefix=1
+
+logging:
+  level:
+    com.train.gateway: debug
+    org.springframework.cloud.gateway: debug
